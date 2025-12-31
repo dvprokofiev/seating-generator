@@ -21,9 +21,6 @@
 ## 📸 Интерфейс системы
 
 <p align="center">
-  <em>Тут будут скриншоты</em>
-</p>
-<p align="center">
   <img src="./screenshots/main.png" width="45%" alt="Главный экран" />
   <img src="./screenshots/editor.png" width="45%" alt="Редактор класса" />
   <img src="./screenshots/generator.png" width="45%" alt="Генератор рассадки" />
