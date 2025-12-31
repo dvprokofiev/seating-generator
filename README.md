@@ -13,8 +13,8 @@
 
 Система построена на базе микросервисной архитектуры:
 
-* **[Вычислительное ядро (Backend)](https://github.com/chashkakefira/seating-generator-backend)** — высокопроизводительный сервер на **Go**. Отвечает за выполнение эволюционных вычислений и обработку бизнес-логики.
-* **[Интерфейс пользователя (Frontend)](https://github.com/chashkakefira/seating-generator-frontend)** — интерактивное приложение на **Vue.js**. Позволяет визуализировать рассадки, настраивать ограничения и управлять процессом генерации.
+- **[Вычислительное ядро (Backend)](https://github.com/chashkakefira/seating-generator-backend)** — высокопроизводительный сервер на **Go**. Отвечает за выполнение эволюционных вычислений и обработку бизнес-логики.
+- **[Интерфейс пользователя (Frontend)](https://github.com/chashkakefira/seating-generator-frontend)** — интерактивное приложение на **Vue.js**. Позволяет визуализировать рассадки, настраивать ограничения и управлять процессом генерации.
 
 ---
 
@@ -24,8 +24,9 @@
   <em>Тут будут скриншоты</em>
 </p>
 <p align="center">
-  <img src="./docs/screenshots/dashboard.png" width="45%" alt="Главный экран" />
-  <img src="./docs/screenshots/editor.png" width="45%" alt="Редактор класса" />
+  <img src="./screenshots/main.png" width="45%" alt="Главный экран" />
+  <img src="./screenshots/editor.png" width="45%" alt="Редактор класса" />
+  <img src="./screenshots/generator.png" width="45%" alt="Генератор рассадки" />
 </p>
 
 ---
@@ -33,8 +34,9 @@
 ## ⚙️ Автоматизация сборки (CI/CD)
 
 Для обеспечения надежности и воспроизводимости результатов используется **GitHub Actions**. Пайплайн автоматизации включает:
-* Сборку и тестирование исходного кода.
-* Создание и публикацию Docker-образов: `seating-generator-backend` и `seating-generator-frontend` в GitHub Container Registry (GHCR).
+
+- Сборку и тестирование исходного кода.
+- Создание и публикацию Docker-образов: `seating-generator-backend` и `seating-generator-frontend` в GitHub Container Registry (GHCR).
 
 ---
 
@@ -43,15 +45,20 @@
 Для развертывания проекта на локальном компьютере необходим **Docker** и **Docker Compose**. Сборка из исходников не требуется — система автоматически загрузит готовые образы.
 
 ### 1. Запуск контейнеров
+
 Клонируйте репозиторий и выполните команду в корневой папке:
+
 ```bash
 docker-compose up -d
 ```
+
 ### 2. Доступ к приложению
-* Frontend (Интерфейс): http://localhost:8092
-* Backend (API): http://localhost:8091
+
+- Frontend (Интерфейс): http://localhost:8092
+- Backend (API): http://localhost:8091
 
 ### 3. Остановка системы
+
 Для корректного завершения работы и освобождения ресурсов используйте:
 
 ```bash
