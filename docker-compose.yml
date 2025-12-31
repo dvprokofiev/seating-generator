@@ -4,14 +4,12 @@ services:
   backend:
     image: ghcr.io/chashkakefira/seating-generator-backend:latest
     container_name: seating-backend
-    restart: unless-stopped
     ports: 
       - "8091:8080"
 
   frontend:
     image: ghcr.io/chashkakefira/seating-generator-frontend:latest
     container_name: seating-frontend
-    restart: unless-stopped
     ports:
       - "8092:80"
     environment: 
