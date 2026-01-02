@@ -398,7 +398,7 @@ layout: two-cols-header
 ::left::
 
 <div class="flex justify-start items-start h-full pl-2">
-  <img src="./img/ladder.svg" class="w-70 h-auto object-contain" />
+  <img src="/ladder.svg" class="w-70 h-auto object-contain" />
 </div>
 
 ::right::
