@@ -397,7 +397,7 @@ layout: two-cols-header
 
 ::left::
 
-![](https://go.dev/images/gophers/ladder.svg)
+![](./img/ladder.svg)
 
 ::right::
 
