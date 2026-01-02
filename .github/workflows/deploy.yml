@@ -53,28 +53,12 @@ jobs:
           cd presentation
           npx slidev export --format pdf --output dist/presentation.pdf
 
-
-      - name: Convert PDF to PPTX
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libreoffice
-          cd presentation
-          libreoffice --headless --convert-to pptx dist/presentation.pdf --outdir dist/
-
       - name: Upload PDF as separate artifact
         uses: actions/upload-artifact@v4
         with:
           name: presentation-pdf
           path: presentation/dist/presentation.pdf
           if-no-files-found: error
-
-      - name: Upload PPTX as separate artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: presentation-pptx
-          path: presentation/dist/presentation.pptx
-          if-no-files-found: error
-
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
