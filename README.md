@@ -50,7 +50,7 @@
 Клонируйте репозиторий и выполните команду в корневой папке:
 
 ```bash
-docker-compose up -d
+docker compose up
 ```
 
 ### 2. Доступ к приложению
@@ -63,5 +63,5 @@ docker-compose up -d
 Для корректного завершения работы и освобождения ресурсов используйте:
 
 ```bash
-docker-compose down
+docker compose down
 ```
