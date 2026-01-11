@@ -52,7 +52,7 @@ jobs:
       - name: Export to PDF
         run: |
           cd presentation
-          npx slidev export --format pdf --wait 10000 --timeout 12000 --dark --per-slide --executable-path "${{ steps.setup-chrome.outputs.chrome-path }}" --output dist/presentation.pdf
+          npx slidev export --format pdf --dark --per-slide --executable-path "${{ steps.setup-chrome.outputs.chrome-path }}" --output dist/presentation.pdf
 
       - name: Upload PDF as separate artifact
         uses: actions/upload-artifact@v4
