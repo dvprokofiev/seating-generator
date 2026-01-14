@@ -72,3 +72,12 @@ docker compose up --pull always
 ```bash
 docker compose down
 ```
+
+## ⚖️ Лицензия и авторство
+Проект распространяется под лицензией GNU Affero General Public License v3.0 (AGPLv3). Это означает, что любые изменения кода должны быть опубликованы под той же лицензией.
+
+Автор: Прокофьев Даниил <danieldzen@yandex.ru>
+
+Подробности: См. файлы [LICENSE](./LICENSE) и [NOTICE](./NOTICE).
+
+Copyright (C) 2026
