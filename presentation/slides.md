@@ -8,6 +8,8 @@ fonts:
 ---
 
 # Написание алгоритма нахождения оптимальной рассадки учеников в классе
+Лицензировано под GNU AGPLv3
+
 Прокофьев Даниил
 
 ---
@@ -631,3 +633,141 @@ class: flex flex-col justify-center
 │   └── SeatingHistory.vue
 └── vite.config.js
 ```
+---
+class: flex flex-col justify-center
+---
+
+# **Почему все запускается одной командой?**
+
+- Триггер: Push в ветку main.
+- Сборка: Сборка Docker-образа фронта и бэка.
+- Загрузка образа: Пуш в GitHub Container Registry (GHCR).
+- Развертывание: Обновление контейнеров на сервере через WatchTower / запуск вручную через ```docker compose up```
+
+```mermaid
+graph LR
+    subgraph GitHub_Cloud [GitHub Cloud]
+        A[Push Code] --> B[GitHub Actions]
+        B -->|Build & Tag| C[Docker Image]
+        C -->|Push| D[(GHCR.io)]
+    end
+
+    subgraph Your_Server [Ваш Сервер / ПК]
+        D -->|Pull| E[Docker Engine]
+        E -->|Run Container| F[Live Application]
+    end
+
+    style B fill:#24292e,color:#fff
+    style D fill:#44cc11,color:#000
+    style F fill:#007bff,color:#fff
+```
+
+---
+layout: two-cols-header
+class: flex flex-col justify-center items-start
+---
+
+# **Прямо во Всемирную паутину!**
+
+::left::
+
+- **Домен:** `seating-generator.ru`
+- **Провайдер:** Cloud.ru (VPS на Linux, Cloud Free Evolution Tier)
+- **Защита:** Cloudflare (WAF/DDoS)
+
+### Архитектура
+- **Caddy:** Реверс-прокси + SSL
+- **Docker:** Те самые контейнеры
+- **Безопасность:** Весь трафик только через прокси
+
+::right::
+
+
+<div class="scale-120 origin-left ml-12">
+
+```mermaid
+graph TD
+    U((Юзер)) --> CF[Cloudflare]
+    CF --> VPS[Cloud.ru]
+    
+    subgraph Server [Host]
+        VPS --> Caddy[Caddy]
+        subgraph Docker [Docker Network]
+            Caddy --> Front[Frontend]
+            Caddy --> Back[Backend API]
+        end
+    end
+
+    style CF fill:#f38020,color:#fff
+    style Caddy fill:#00a2ff,color:#fff
+    style Front fill:#42b883,color:#fff
+    style Back fill:#384d54,color:#fff
+```
+</div>
+
+---
+layout: center
+---
+
+# **Демонстрация работы**
+---
+
+<div class="flex justify-center">
+  <video 
+    src="/demo.mp4" 
+    controls 
+    muted 
+    class="w-1024 rounded-lg shadow-xl"
+  ></video>
+</div>
+---
+layout: two-cols-header
+class: flex flex-col justify-center
+---
+
+# **Лицензирование**
+
+::left::
+
+### ***GNU Affero GPL v3.0***
+
+- **Copyleft:** Любые изменения должны распространяться на тех же условиях
+- **Remote Network Interaction:** Если сервис доступен через сеть, исходный код **обязан** быть открыт
+- **Прозрачность:** Пользователь имеет право знать, как обрабатываются его данные
+
+### **Что это значит для проекта?**
+
+- **Доступность:** Ссылка на репозиторий закреплена в Navbar приложения
+- **Свобода:** Любой желающий может развернуть свою копию для школы или университета
+
+::right::
+
+<img src="/GNU_logo.png"></img>
+
+---
+layout: center
+class: text-center
+---
+
+# **Изучить проект**
+
+<div class="flex flex-col items-center mt-8">
+  <div class="p-4 bg-white rounded-xl shadow-2xl">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/chashkakefira/seating-generator" 
+         class="w-50 h-50" />
+  </div>
+  
+  <p class="mt-4 text-xl font-mono">github.com/chashkakefira/seating-generator</p>
+  
+  <div class="mt-6 flex gap-4 opacity-70">
+    <span class="flex items-center gap-1"><div class="i-mdi-docker" /> Go</span>
+    <span class="flex items-center gap-1"><div class="i-mdi-github" /> Vue</span>
+    <span class="flex items-center gap-1"><div class="i-mdi-github" /> Docker</span>
+    <span class="flex items-center gap-1"><div class="i-mdi-web" /> AGPLv3</span>
+  </div>
+</div>
+
+<p class="mt-12 text-sm opacity-50">
+  Проект оптимизирован для работы в десктопных браузерах.<br>
+  QR-код ведет на документацию и исходный код.
+</p>
