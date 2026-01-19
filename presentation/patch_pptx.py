@@ -20,7 +20,7 @@ def patch_video_fullscreen(pptx_path, video_path, slide_index):
         mime_type='video/mp4'
     )
     
-    prs.save('presentation.pptx')
+    prs.save(pptx_path)
 
 if __name__ == "__main__":
     # Индекс слайда (0 — первый, 3 — четвертый)
