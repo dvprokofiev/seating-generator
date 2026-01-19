@@ -80,7 +80,7 @@ jobs:
         run: pip install python-pptx
 
       - name: Patch Video into PPTX
-        run: python patch_pptx.py
+        run: python presentation/patch_pptx.py
 
       - name: Upload PPTX as artifact
         uses: actions/upload-artifact@v4
