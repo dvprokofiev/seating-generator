@@ -761,11 +761,11 @@ class: text-center
 
 <div class="flex flex-col items-center mt-8">
   <div class="p-4 bg-white rounded-xl shadow-2xl">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/chashkakefira/seating-generator" 
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://github.com/dvprokofiev/seating-generator" 
          class="w-50 h-50" />
   </div>
   
-  <p class="mt-4 text-xl font-mono">github.com/chashkakefira/seating-generator</p>
+  <p class="mt-4 text-xl font-mono">github.com/dvprokofiev/seating-generator</p>
   
   <div class="mt-6 flex gap-4 opacity-70">
     <span class="flex items-center gap-1"><div class="i-mdi-docker" /> Go</span>

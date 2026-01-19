@@ -3,13 +3,13 @@
 # Часть проекта генератора рассадок
 services:
   backend:
-    image: ghcr.io/chashkakefira/seating-generator-backend:latest
+    image: ghcr.io/dvprokofiev/seating-generator-backend:latest
     container_name: seating-backend
     ports: 
       - "8091:5000"
 
   frontend:
-    image: ghcr.io/chashkakefira/seating-generator-frontend:latest
+    image: ghcr.io/dvprokofiev/seating-generator-frontend:latest
     container_name: seating-frontend
     ports:
       - "8092:80"

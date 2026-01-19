@@ -1,7 +1,7 @@
 # 🎓 Генератор рассадки
 
-[![Backend CI](https://github.com/chashkakefira/seating-generator-backend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/chashkakefira/seating-generator-backend/actions/workflows/docker-image.yml)
-[![Frontend CI](https://github.com/chashkakefira/seating-generator-frontend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/chashkakefira/seating-generator-frontend/actions/workflows/docker-image.yml)
+[![Backend CI](https://github.com/dvprokofiev/seating-generator-backend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/dvprokofiev/seating-generator-backend/actions/workflows/docker-image.yml)
+[![Frontend CI](https://github.com/dvprokofiev/seating-generator-frontend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/dvprokofiev/seating-generator-frontend/actions/workflows/docker-image.yml)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
 ![Tech](https://img.shields.io/badge/Stack-Go%20%7C%20Vue%20%7C%20Docker-success)
 
@@ -13,8 +13,8 @@
 
 Система построена на базе микросервисной архитектуры:
 
-- **[Backend](https://github.com/chashkakefira/seating-generator-backend)** — сервер на Go. Принимает данные класса, запускает меметический алгоритм и отдает готовый вариант рассадки.
-- **[Frontend](https://github.com/chashkakefira/seating-generator-frontend)** — клиент на **Vue.js**. Позволяет визуализировать рассадки, настраивать ограничения и управлять процессом генерации.
+- **[Backend](https://github.com/dvprokofiev/seating-generator-backend)** — сервер на Go. Принимает данные класса, запускает меметический алгоритм и отдает готовый вариант рассадки.
+- **[Frontend](https://github.com/dvprokofiev/seating-generator-frontend)** — клиент на **Vue.js**. Позволяет визуализировать рассадки, настраивать ограничения и управлять процессом генерации.
 
 ---
 
@@ -53,7 +53,7 @@
 
 ```bash
 # клонируем репозиторий
-git clone https://github.com/chashkakefira/seating-generator
+git clone https://github.com/dvprokofiev/seating-generator
 # переходим в папку с репозиторием
 cd seating-generator
 # запускаем Docker контейнеры
