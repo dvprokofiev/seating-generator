@@ -79,6 +79,7 @@ class: flex flex-col justify-center
  /              \____/   \
 /
 ```
+
 <style>
 .two-cols-header {
   column-gap: 20px;

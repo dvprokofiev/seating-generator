@@ -63,6 +63,28 @@ jobs:
           path: presentation/dist/presentation.pdf
           if-no-files-found: error
 
+      - name: Export to PPTX
+        run: |
+          cd presentation
+          npx slidev export --format pptx --output dist/presentation.pptx
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install python-pptx
+        run: pip install python-pptx
+
+      - name: Patch Video into PPTX
+        run: python patch_pptx.py
+
+      - name: Upload PPTX as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-presentation
+          path: presentation/dist/presentation.pptx
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
