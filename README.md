@@ -32,7 +32,7 @@
 
 ## 📊 Ссылка на презентацию к проекту
 
-Презентация сделана с помощью Slidev и собирается автоматически с помощью Github Actions. Посмотреть ее можно [здесь](https://presentation.seating-generator.ru/), скачать [здесь](https://presentation.seating-generator.ru/presentation.pdf) в формате PDF
+Презентация сделана с помощью Slidev и собирается автоматически с помощью Github Actions. Посмотреть ее можно [здесь](https://presentation.seating-generator.ru/), скачать [здесь](https://presentation.seating-generator.ru/presentation.pdf) в формате PDF, [здесь](https://presentation.seating-generator.ru/presentation.pptx) в формате PPTX
 
 ## ⚙️ Автоматизация сборки (CI/CD)
 
