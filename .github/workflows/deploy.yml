@@ -63,6 +63,9 @@ jobs:
           path: presentation/dist/presentation.pdf
           if-no-files-found: error
 
+      - name: Install playwright
+        run: npx playwright install --with-deps
+
       - name: Export to PPTX
         run: |
           cd presentation
