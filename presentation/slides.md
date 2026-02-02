@@ -350,6 +350,7 @@ func fitness(seating []int, config ClassConfig, w Weights, friends SocialMap, en
 
 ---
 layout: two-cols-header
+class: px-1
 ---
 
 # **Как работает проверка предпочтений?**
@@ -472,6 +473,7 @@ layout: two-cols
 </div>
 ---
 layout: two-cols-header
+class: px-1
 ---
 
 # **Как выглядит запрос к серверу?** 
@@ -570,7 +572,7 @@ layout: default
 ![](/screenshots/view-seating.png)
 ---
 layout: two-cols-header
-class: flex flex-col justify-center
+class: px-1
 ---
 
 # **Что использовано?**
@@ -661,7 +663,7 @@ graph LR
         C -->|Push| D[(GHCR.io)]
     end
 
-    subgraph Your_Server [Ваш Сервер / ПК]
+    subgraph Your_Server [Наш / Ваш Сервер / ПК]
         D -->|Pull| E[Docker Engine]
         E -->|Run Container| F[Live Application]
     end
