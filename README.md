@@ -76,7 +76,7 @@ docker compose down
 ## ⚖️ Лицензия и авторство
 Проект распространяется под лицензией GNU Affero General Public License v3.0 (AGPLv3).
 
-Автор: Прокофьев Даниил <danieldzen@yandex.ru>
+Автор: Прокофьев Даниил <d@dvprokofiev.ru>
 
 Подробности: См. файлы [LICENSE](./LICENSE) и [NOTICE](./NOTICE).
 
