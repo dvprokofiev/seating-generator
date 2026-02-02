@@ -21,6 +21,15 @@ fonts:
 </div>
 
 ---
+layout: center
+class: text-center
+---
+
+# $7 \pm 2$
+
+число Миллера
+
+---
 layout: two-cols-header
 class: flex flex-col justify-center
 ---
@@ -387,7 +396,7 @@ layout: two-cols-header
 class: flex flex-col justify-center px-2
 ---
 
-# **Веса, настройка, калибровка фитнес функции**
+# **Веса в фитнес функции**
 
 ::left::
 
