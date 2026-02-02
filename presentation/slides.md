@@ -30,7 +30,7 @@ class: flex flex-col justify-center
 ::left::
 
 > ### Разработать веб-сайт, генерирующий оптимальную рассадку с учетом данных ограничений и предпочтений
-Так как задача относится к классу **NP-полных задач**, оптимальное решение за разумное время способны дать только **эвристические алгоритмы**.
+Так как задача относится к классу **NP-полных задач**, оптимальное решение за разумное время способны дать только **эвристические алгоритмы**
 
 ::right::
 
@@ -88,13 +88,14 @@ class: flex flex-col justify-center
 
 ---
 layout: two-cols-header
+class: flex flex-col justify-center
 ---
 
 # **Метод имитации отжига**
 
 ::left::
 
-Алгоритм **эффективно** находит **глобальные области**, но критически зависит от времени.
+Алгоритм **эффективно** находит **глобальные области**, но критически зависит от времени
 
 **Главные недостатки:**
 - **Время:** Требует очень медленного охлаждения.
@@ -102,34 +103,12 @@ layout: two-cols-header
 
 ::right::
 
-<div class="grid grid-cols-3 gap-2 items-end h-50 mt-10 text-center">
+<img src="https://ru.algorithmica.org/cs/combinatorial-optimization/img/annealing.gif"></img>
 
-  <div class="flex flex-col items-center">
-    <div class="w-12 h-16 bg-gray-400/20 border-t-2 border-gray-400/30">
-      <div class="w-3 h-3 bg-gray-400 rounded-full mx-auto mt-2 opacity-30"></div>
-    </div>
-    <span class="text-[9px] mt-1 opacity-40 uppercase">Локальный<br>тупик</span>
-  </div>
-
-  <div class="flex flex-col items-center">
-    <carbon-star class="text-yellow-400 mb-1 opacity-30" />
-    <div class="w-12 h-40 bg-emerald-500/10 border-t-2 border-emerald-500/20 border-dashed">
-    </div>
-    <span class="text-[9px] mt-1 opacity-40 uppercase">Глобальный<br>максимум</span>
-  </div>
-
-  <div class="flex flex-col items-center">
-    <carbon-warning class="text-orange-500 mb-1 animate-pulse" />
-    <div class="w-12 h-28 bg-orange-500/40 border-t-2 border-orange-500">
-      <div class="w-3 h-3 bg-white rounded-full mx-auto mt-2 shadow-[0_0_8px_white]"></div>
-    </div>
-    <span class="text-[9px] mt-1 text-orange-400 font-bold uppercase">Ошибка<br>закалки</span>
-  </div>
-
-</div>
+#### Здесь алгоритм ищет максимум функции
 
 <div class="mt-8 p-3 bg-orange-400/5 border-l-2 border-orange-400 text-[13px] leading-tight">
-  <strong>Проблема:</strong> Если "температура" падает слишком быстро, алгоритм не успевает дойти до идеала и замерзает на субоптимальном решении.
+  <strong>Проблема:</strong> Если "температура" падает слишком быстро, алгоритм не успевает дойти до идеала и замерзает на субоптимальном решении
 </div>
 
 ---
@@ -151,68 +130,106 @@ layout: two-cols-header
 ::right::
 
 <div class="flex flex-col items-center justify-center h-full space-y-4">
-  <div class="flex space-x-8 relative">
-    <div class="flex flex-col items-center">
-      <div class="grid grid-cols-2 gap-1 p-1 bg-blue-500/20 border border-blue-500/50 rounded">
-        <div class="w-4 h-4 bg-blue-500"></div><div class="w-4 h-4 bg-blue-500"></div>
-        <div class="w-4 h-4 bg-gray-400 opacity-20"></div><div class="w-4 h-4 bg-gray-400 opacity-20"></div>
-      </div>
-      <span class="text-[9px] mt-1 opacity-50 uppercase">Родитель A</span>
-    </div>
-    <div class="flex flex-col items-center">
-      <div class="grid grid-cols-2 gap-1 p-1 bg-purple-500/20 border border-purple-500/50 rounded">
-        <div class="w-4 h-4 bg-gray-400 opacity-20"></div><div class="w-4 h-4 bg-gray-400 opacity-20"></div>
-        <div class="w-4 h-4 bg-purple-500"></div><div class="w-4 h-4 bg-purple-500"></div>
-      </div>
-      <span class="text-[9px] mt-1 opacity-50 uppercase">Родитель B</span>
+  <div class="text-[10px] uppercase opacity-50 mb-1">Генерация шума (много вариантов)</div>
+  <div class="grid grid-cols-4 gap-2 opacity-40">
+    <div class="w-8 h-4 bg-red-400 rounded-full animate-pulse"></div>
+    <div class="w-8 h-4 bg-blue-400 rounded-full"></div>
+    <div class="w-8 h-4 bg-yellow-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+    <div class="w-8 h-4 bg-purple-400 rounded-full"></div>
+  </div>
+
+  <div class="w-full h-px bg-gradient-to-r from-transparent via-gray-500 to-transparent my-2"></div>
+
+  <div class="flex flex-col items-center scale-110">
+    <div class="text-xs font-bold text-orange-400 mb-2 italic">Сито фитнес-функции</div>
+    <div class="relative flex space-x-2">
+       <div class="flex flex-col items-center opacity-30">
+         <div class="w-6 h-6 border-2 border-red-500 flex items-center justify-center rounded">✕</div>
+         <span class="text-[8px] mt-1">Плохо</span>
+       </div>
+       <div class="flex flex-col items-center scale-125 mx-4">
+         <div class="w-8 h-8 border-2 border-emerald-500 flex items-center justify-center rounded shadow-[0_0_10px_rgba(16,185,129,0.5)]">
+           <div class="w-4 h-4 bg-emerald-500 rotate-45"></div>
+         </div>
+         <span class="text-[9px] mt-1 text-emerald-400 font-bold uppercase">Выжил</span>
+       </div>
+       <div class="flex flex-col items-center opacity-30">
+         <div class="w-6 h-6 border-2 border-red-500 flex items-center justify-center rounded">✕</div>
+         <span class="text-[8px] mt-1">Плохо</span>
+       </div>
     </div>
   </div>
-  <carbon-arrow-down class="text-gray-400 animate-bounce" />
-  <div class="flex flex-col items-center bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/30">
-    <div class="grid grid-cols-2 gap-1 p-1 bg-emerald-500/20 border border-emerald-500 rounded shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-      <div class="w-4 h-4 bg-blue-500"></div><div class="w-4 h-4 bg-blue-500"></div>
-      <div class="w-4 h-4 bg-purple-500"></div><div class="w-4 h-4 bg-purple-500"></div>
+
+  <carbon-arrow-down class="text-gray-400 mt-2" />
+
+  <div class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-center">
+    <div class="text-[10px] text-emerald-400 uppercase tracking-widest">Итоговая популяция</div>
+    <div class="flex space-x-1 mt-2 justify-center">
+      <div class="w-3 h-3 bg-emerald-500 rounded-sm"></div>
+      <div class="w-3 h-3 bg-emerald-500 rounded-sm opacity-80"></div>
+      <div class="w-3 h-3 bg-emerald-500 rounded-sm opacity-60"></div>
+      <div class="w-3 h-3 bg-emerald-500 rounded-sm opacity-40"></div>
     </div>
-    <span class="text-[10px] mt-2 text-emerald-400 font-bold uppercase text-center">Лучший потомок<br>(собрал все плюсы)</span>
+    <p class="text-[10px] mt-2 leading-tight">Популяция "запоминает" форму <br>успеха через отбор</p>
   </div>
 </div>
 ---
 layout: two-cols-header
+class: px-2
 ---
 
 # **Меметический алгоритм**
 
 ::left::
 
-Меметический подход объединяет глобальный охват генетики и локальный поиск, что позволяет превносить разнообразие в популяцию и помогает избежать застревания в локальном максимуме.
+Меметический подход объединяет глобальный охват генетики и локальный поиск, что позволяет превносить разнообразие в популяцию и помогает избежать застревания в локальном максимуме
 
 **Как работает**
-- **Гены:** Наследуем общую структуру рассадки.
-- **Локальный поиск:** Совершаем N итераций, пытаясь каждый раз поменять двух случайных учеников местами. Если качество рассадки улучшилось - оставляем.
+- **Гены:** Наследуем общую структуру рассадки
+- **Локальный поиск:** Совершаем N итераций, пытаясь каждый раз поменять двух случайных учеников местами. Если качество рассадки улучшилось - оставляем
 
 ::right::
 
-<div class="flex flex-col items-center justify-center h-full space-y-2">
-  <div class="p-2 border border-gray-500/30 rounded bg-gray-500/5 text-center w-full">
-    <div class="text-[9px] uppercase opacity-50 mb-2">Шаг 1: Генетический алгоритм</div>
-    <div class="flex justify-center space-x-1">
-       <div class="w-4 h-4 bg-blue-500"></div><div class="w-4 h-4 bg-blue-500"></div>
-       <div class="w-4 h-4 bg-red-400 animate-pulse"></div> <div class="w-4 h-4 bg-blue-500"></div>
+<div class="flex flex-col items-center justify-center h-full space-y-3">
+  
+  <div class="w-full p-2 border border-blue-500/30 bg-blue-500/5 rounded">
+    <div class="text-[9px] uppercase opacity-60 mb-2">Ввод: Результат GA</div>
+    <div class="flex justify-center gap-1">
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-orange-400 rounded-sm shadow-[0_0_8px_rgba(251,146,60,0.5)]"></div>
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-orange-400 rounded-sm shadow-[0_0_8px_rgba(251,146,60,0.5)]"></div>
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
     </div>
-    <span class="text-[10px] text-orange-400 italic">Почти готово (есть 1 ошибка)</span>
   </div>
-  <div class="flex flex-col items-center text-emerald-400 py-1">
-    <carbon-tools class="text-xl" />
-    <span class="text-[9px] font-bold uppercase">Локальный поиск</span>
-    <carbon-arrow-down />
-  </div>
-  <div class="p-2 border border-emerald-500 rounded bg-emerald-500/10 text-center w-full shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-    <div class="text-[9px] uppercase text-emerald-400 mb-2">Шаг 2: Шлифовка решения</div>
-    <div class="flex justify-center space-x-1">
-       <div class="w-4 h-4 bg-blue-500"></div><div class="w-4 h-4 bg-blue-500"></div>
-       <div class="w-4 h-4 bg-emerald-500"></div> <div class="w-4 h-4 bg-blue-500"></div>
+
+  <div class="flex flex-col items-center py-1 relative">
+    <div class="flex items-center space-x-2">
+      <carbon-arrows-horizontal class="text-orange-400 animate-pulse" />
+      <span class="text-[9px] font-bold uppercase text-orange-400 italic">Случайный Swap (30 раз)</span>
     </div>
-    <span class="text-[10px] text-emerald-500 font-bold uppercase">Идеальная рассадка</span>
+    <div class="h-6 w-px bg-dashed border-l border-gray-500 opacity-30 mt-1"></div>
+    <div class="absolute right-[-40px] top-6 flex flex-col items-start opacity-60">
+      <div class="text-[8px] text-green-400">fitness(x') > fitness(x) ?</div>
+      <div class="text-[8px] text-red-400">Да → оставляем</div>
+    </div>
+  </div>
+
+  <div class="w-full p-2 border border-emerald-500/50 bg-emerald-500/10 rounded shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+    <div class="text-[9px] uppercase text-emerald-400 mb-2">Локальный Оптимум</div>
+    <div class="flex justify-center gap-1">
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-emerald-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-emerald-500 rounded-sm"></div>
+       <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
+    </div>
+    <div class="text-[8px] text-emerald-400 mt-2 text-center font-mono">Фитнес улучшен на +12%</div>
+  </div>
+
+  <div class="text-[9px] opacity-60 text-center leading-tight">
+    Метод "восхождения к холму": <br> 
+    принимаем изменения, только если они <br> делают рассадку лучше здесь и сейчас
   </div>
 </div>
 ---
@@ -241,7 +258,7 @@ layout: default
 # **Как хранить рассадки в памяти?**
 --
 
-Для удобства работы с функциями мутации, скрещивания и фитнеса было принято решение использовать одномерные массивы. Их удобно хранить в памяти и совершать различные операции.
+Для удобства работы с функциями мутации, скрещивания и фитнеса было принято решение использовать одномерные массивы. Их удобно хранить в памяти и совершать различные операции
 
 ```text
 [1, 3, 5, 6, 7, 2, 4, 8, 9, 10] - класс размером 2 ряда * 5 парты в ряду, но только 8 учеников
@@ -254,7 +271,7 @@ layout: default
 9(-1)   10(-1)
 ```
 
-Для индексов больше, чем количество учеников будем считать, что это место пустует. Они при сборке ответа будут обозначаться как -1.
+Для индексов больше, чем количество учеников будем считать, что это место пустует. Они при сборке ответа будут обозначаться как -1
 
 ---
 layout: default
@@ -357,8 +374,8 @@ class: px-1
 
 ::left::
 
-Каждая функция, которая что-то проверяет, возвращает **нормализованное значение** от 0.0 до 1.0. 
-Такая функция считает учтенность какого-либо предпочтения для отдельного ученика и делит полученное значение на максимальное значение учтенности этого конкретного предпочтения.
+Каждая функция, которая что-то проверяет, возвращает **нормализованное значение** от 0.0 до 1.0
+Такая функция считает учтенность какого-либо предпочтения для отдельного ученика и делит полученное значение на максимальное значение учтенности этого конкретного предпочтения
 
 Затем, значение этой функции умножается на некий вес, который пришел с фронтенда.
 
@@ -391,7 +408,7 @@ func checkPref(student optStudent, row, col int) float64 {
 
 ---
 layout: two-cols-header
-class: flex flex-col justify-center
+class: flex flex-col justify-center px-2
 ---
 
 # **Веса, настройка, калибровка фитнес функции**
@@ -399,9 +416,9 @@ class: flex flex-col justify-center
 ::left::
 
 Самая важная часть алгоритма. От того, как конкретно функция fitness оценит рассадку, зависит, куда дальше пойдет эволюция.
-Однако, у каждого пользователя могут быть разные запросы. Поэтому важно разработать максимально гибкую и настраиваемую систему.
+Однако, у каждого пользователя могут быть разные запросы. Поэтому важно разработать максимально гибкую и настраиваемую систему
 
-Вместе с запросом к бекенду посылаются **веса** - какие предпочтения учитывать больше, а какие меньше. От их правильной настройки зависит качество решения.
+Вместе с запросом к бекенду посылаются **веса** - какие предпочтения учитывать больше, а какие меньше. От их правильной настройки зависит качество решения
 
 ::right::
 
@@ -442,15 +459,16 @@ layout: two-cols-header
 layout: two-cols
 ---
 
-### **Проект реализован по принципу разделения ответственности**
+# **"Архитектура"**
+
 * Backend (Go)
-  * Выполнение меметического алгоритма, изоляция ради стабильности
+  * Выполнение меметического алгоритма, чтобы не сломать школьные компьютеры
 * Frontend (Vue 3)
   * Клиентское приложение для настройки параметров и весов, визуализация результата
 * Взаимодействие (REST API)
   * Обмен данными через JSON-объекты, возможность работы с другими клиентами
 * Инфраструктура (Docker + Github Actions)
-  * Развертывание одной командой без установки зависимостей.
+  * Развертывание одной командой без установки зависимостей
 
 ::right::
 
@@ -529,9 +547,6 @@ class: px-1
           "rows": 3,
           "columns": 4
       },
-      "popSize": 300,
-      "generations": 400,
-      "crossOverChance": 0.3,
       "PriorityWeights": {
           "Medical": 0.9,
           "Friends": 0.65,
@@ -778,5 +793,5 @@ class: text-center
 
 <p class="mt-12 text-sm opacity-50">
   Проект оптимизирован для работы в десктопных браузерах.<br>
-  QR-код ведет на документацию и исходный код.
+  QR-код ведет на документацию и исходный код
 </p>

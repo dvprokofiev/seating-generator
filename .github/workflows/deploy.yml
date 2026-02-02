@@ -39,7 +39,9 @@ jobs:
           nci
 
       - name: Install playwright chromium
-        run: npx playwright install --with-deps
+        run: |
+          cd presentation
+          npx playwright install --with-deps chromium
 
       - name: Build Slidev (HTML)
         run: |
