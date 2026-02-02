@@ -684,7 +684,6 @@ class: flex flex-col justify-center items-start
 
 - **Домен:** `seating-generator.ru`
 - **Провайдер:** Cloud.ru (VPS на Linux, Cloud Free Evolution Tier)
-- **Защита:** Cloudflare (WAF/DDoS)
 
 ### Архитектура
 - **Caddy:** Реверс-прокси + SSL
