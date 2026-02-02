@@ -193,7 +193,7 @@ class: px-2
 <div class="flex flex-col items-center justify-center h-full space-y-3">
   
   <div class="w-full p-2 border border-blue-500/30 bg-blue-500/5 rounded">
-    <div class="text-[9px] uppercase opacity-60 mb-2">Ввод: Результат GA</div>
+    <div class="text-[9px] uppercase opacity-60 mb-2">Ввод: Результат работы ген. алгоритма</div>
     <div class="flex justify-center gap-1">
        <div class="w-5 h-5 bg-blue-500 rounded-sm"></div>
        <div class="w-5 h-5 bg-orange-400 rounded-sm shadow-[0_0_8px_rgba(251,146,60,0.5)]"></div>
@@ -232,25 +232,7 @@ class: px-2
     принимаем изменения, только если они <br> делают рассадку лучше здесь и сейчас
   </div>
 </div>
----
-layout: default
----
 
-# **Как работает меметический алгоритм?**
-
-- Создаём начальную популяцию случайных рассадок
-- Оцениваем каждую рассадку с помощью функции fitness
-- Применяем локальный поиск к лучшей особи и (с шансом 0,05) к случайным особям
-- Отбираем родителей для скрещивания (через турнирную селекцию)
-- Генерируем потомство:
-
- --- Скрещивание (CrossOver) родителей
-
- --- Мутация (SwapMutation) с заданной вероятностью
-
- --- Переносим лучшую особь в новое поколение (элитизм)
-
- --- Повторяем шаги 2–6 заданное число поколений
 ---
 layout: default
 ---
@@ -278,67 +260,61 @@ layout: default
 ---
 
 # **Как работает меметический алгоритм?**
-```go
-func RunGA(req Request) ([]Response, int) { 
-  // Создаем популяцию размером popSize и заполняем ее случайными рассадками
-	population := make([][]int, popSize)
-	for i := range population {
-		population[i] = rand.Perm(N)
-	}
-  // Для каждого поколения:
-	for gen := 0; gen < generations; gen++ {
-		scores := make([]int, popSize)
-		for i, seat := range population {
-      // Оцениванием рассадку с помощью функции fitness
-			scores[i] = fitness(seat, req.Students, req.Preferences, req.Forbidden, req.ClassConfig, weights, ...)
-		}
-    // Создаем новую популяцию, которая будет содержать детей нынешнего поколения
-		newPop := make([][]int, popSize)
-    // Ищем лучшую на данный момент рассадку
+```go {all|2|4-9|11-16|18-20}
+for gen := 0; gen < generations; gen++ {
+		// ... оценка каждой особи в популяции, ускоренное с помощью параллелизации ...
+    
 		iBest := 0
-		for j := 1; j < popSize; j++ {
-			if scores[j] > scores[iBest] {
-				iBest = j
+		for i := 1; i < popSize; i++ {
+			if scores[i] > scores[iBest] {
+				iBest = i
 			}
 		}
-		// ...
-}
+
+		if scores[iBest] > (bestFitnessEver + 0.001) {
+			bestFitnessEver = scores[iBest]
+			stagnationCounter = 0
+		} else {
+			stagnationCounter++
+		}
+
+		if stagnationCounter >= stagnationLimit {
+			// ранний выход если результат перестал улучшаться
+			break
+		}
 ```
----
-layout: default
+
 ---
 
 # **Как работает меметический алгоритм?**
-
-```go
-// Применяем локальный поиск к лучшей особи и с шансом 0.05 к случайной особи
-for i := 0; i < popSize; i++ {
-			if i == iBest || rand.Float64() < 0.05 {
-				population[i] = localSearch(population[iBest], req.Students, req.ClassConfig, weights, friends, enemies)
-				scores[i] = fitness(population[iBest], req.Students, req.Preferences, req.Forbidden, req.ClassConfig, ...)
-			}
+```go{all|1-4|5-6|11-18|22-23}
+		mutationRate := 0.15
+		if stagnationCounter > 50 {
+			mutationRate = 0.4
 		}
-    // Переносим одну наилучшую особь в новое поколение без изменений (элитизм)
-		newPop[0] = make([]int, N)
 		copy(newPop[0], population[iBest])
-    // Отбираем родителей для скрещивания с помощью турнира
-		for i := 1; i < popSize; i++ {
-			parent1 := tournamentSelection(population, scores, 3)
-			parent2 := tournamentSelection(population, scores, 3)
-			child := CrossOver(parent1, parent2)
-			if rand.Float64() < req.CrossOverChance {
-        // Реализуем случайную мутацию (меняем двух учеников местами)
-				child = SwapMutation(child)
-			}
-			newPop[i] = child
+		localSearch(rands[0], newPop[0], req.ClassConfig, weights, friends, enemies, staticScores, ...)
+		for w := 0; w < numCPU; w++ {
+			// ...
+			go func(s, e int, r *rand.Rand) {
+				defer wg.Done()
+				for i := s; i < e; i++ {
+					p1Idx := tournamentSelection(r, scores, 3)
+					p2Idx := tournamentSelection(r, scores, 3)
+					CrossOver(r, population[p1Idx], population[p2Idx], newPop[i], usedBufs[i])
+					if r.Float64() < mutationRate {
+						SwapMutation(r, newPop[i])
+					}
+				}
+			}(start, end, rands[w])
 		}
-		population = newPop
+		wg.Wait()
+		population, newPop = newPop, population
+		totalGens++
 	}
-	// ...
 ```
 
 ---
-
 
 # **Фитнес функция: как оценить рассадку?**
 
