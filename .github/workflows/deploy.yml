@@ -84,6 +84,40 @@ jobs:
           name: final-presentation
           path: presentation/dist/presentation.pptx
 
+      - name: Install Fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-dejavu fonts-liberation
+
+      - name: Run Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Install TeX Live (XeLaTeX)
+        run: sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-latex-extra texlive-lang-cyrillic
+
+      - name: Build PDF
+        run: |
+          cd speech
+          pandoc speech.md -o speech.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
+
+      - name: Build .docx
+        run: |
+          cd speech
+          pandoc speech.md --reference-doc=template.docx -o speech.docx
+
+      - name: Upload Speech artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: speech-files
+          path: |
+            speech/speech.pdf
+            speech/speech.docx
+
+      - name: Copy Speech files to Site dist
+        run: |
+          cp speech/speech.pdf presentation/dist/
+          cp speech/speech.docx presentation/dist/
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
