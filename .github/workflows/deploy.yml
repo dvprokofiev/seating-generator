@@ -137,8 +137,8 @@ jobs:
           cp -r frontend final_archive/frontend
           cp -r backend final_archive/backend
           cp -r presentation final_archive/presentation_sources
-          cp presentation/presentation.pptx final_archive/
-          cp presentation/presentation.pdf final_archive/
+          cp presentation/dist/presentation.pptx final_archive/
+          cp presentation/dist/presentation.pdf final_archive/
           cp speech/speech.pdf final_archive/
           cp speech/speech.docx final_archive/
 
