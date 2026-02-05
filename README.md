@@ -38,6 +38,10 @@
 
 Скачать речь можно [здесь](https://presentation.seating-generator.ru/speech.pdf) в PDF (предпочтительнее) и [здесь](https://presentation.seating-generator.ru/speech.docx) в формате DOCX
 
+## Архив со всем нужным
+
+Архив формируется автоматически и содержит файлы речи, презентации и актуальный исходный код. Скачать [здесь](https://presentation.seating-generator.ru/seating-generator.zip)
+
 ## ⚙️ Автоматизация сборки (CI/CD)
 
 Для обеспечения надежности и воспроизводимости результатов используется **GitHub Actions**. Пайплайн автоматизации включает:

@@ -2,6 +2,8 @@ name: Deploy Slidev Presentation
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
   push:
     branches: [main]
     paths:
@@ -25,50 +27,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache Presentation Dist
+        id: cache-slides
+        uses: actions/cache@v4
+        with:
+          path: presentation/dist
+          key: ${{ runner.os }}-slides-${{ hashFiles('presentation/**') }}
+
       - name: Setup Node.js
+        if: steps.cache-slides.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
 
-      - name: Install global dependencies
-        run: npm i -g @antfu/ni
-
-      - name: Install project dependencies
+      - name: Install and Build Slides
+        if: steps.cache-slides.outputs.cache-hit != 'true'
         run: |
+          npm i -g @antfu/ni
           cd presentation
           nci
-
-      - name: Install playwright chromium
-        run: |
-          cd presentation
           npx playwright install --with-deps chromium
-
-      - name: Build Slidev (HTML)
-        run: |
-          cd presentation
           nr build --base /
-
-      - name: Export to PDF
-        run: |
-          cd presentation
           npx slidev export --format pdf --dark --per-slide --output dist/presentation.pdf
-
-      - name: Export to PPTX
-        run: |
-          cd presentation
           npx slidev export --format pptx --output dist/presentation.pptx
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-
-      - name: Install python-pptx
-        run: pip install python-pptx
-
-      - name: Patch Video into PPTX
-        run: |
-          cd presentation
+          python -m pip install python-pptx
           python patch_pptx.py
 
       - name: Upload Presentation Artifact
@@ -83,34 +65,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Fonts
+      - name: Cache Speech Dist
+        id: cache-speech
+        uses: actions/cache@v4
+        with:
+          path: speech-dist-temp
+          key: ${{ runner.os }}-speech-${{ hashFiles('speech/speech.md') }}
+
+      - name: Install Fonts and TeX
+        if: steps.cache-speech.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y fonts-dejavu fonts-liberation
+          sudo apt-get install -y fonts-dejavu fonts-liberation texlive-xetex texlive-fonts-recommended texlive-latex-extra texlive-lang-cyrillic
 
       - name: Run Pandoc
+        if: steps.cache-speech.outputs.cache-hit != 'true'
         uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install TeX Live (XeLaTeX)
-        run: sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-latex-extra texlive-lang-cyrillic
-
-      - name: Build PDF
+      - name: Build Speech
+        if: steps.cache-speech.outputs.cache-hit != 'true'
         run: |
           cd speech
           pandoc speech.md -o speech.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
-
-      - name: Build .docx
-        run: |
-          cd speech
           pandoc speech.md --reference-doc=template.docx -o speech.docx
+          pandoc speech.md -o speech.docx
+          mkdir -p ../speech-dist-temp
+          cp speech.pdf ../speech-dist-temp/
+          cp speech.docx ../speech-dist-temp/
 
       - name: Upload Speech Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: speech-dist
-          path: |
-            speech/speech.pdf
-            speech/speech.docx
+          path: ${{ steps.cache-speech.outputs.cache-hit == 'true' && 'speech-dist-temp/' || 'speech/' }}
 
   prepare-archive:
     needs: [build-presentation, build-speech]
@@ -119,48 +106,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout Frontend
-        uses: actions/checkout@v4
-        with:
-          repository: dvprokofiev/seating-generator-frontend
-          path: frontend
+      - name: Checkout External Repos
+        run: |
+          git clone --depth 1 https://github.com/dvprokofiev/seating-generator-frontend frontend
+          git clone --depth 1 https://github.com/dvprokofiev/seating-generator-backend backend
 
-      - name: Checkout Backend
-        uses: actions/checkout@v4
-        with:
-          repository: dvprokofiev/seating-generator-backend
-          path: backend
-
-      - name: Download Presentation Artifacts
+      - name: Download Presentation and Speech
         uses: actions/download-artifact@v4
         with:
-          name: presentation-dist
-          path: presentation/dist
-
-      - name: Download Speech Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: speech-dist
-          path: speech/
+          path: temp_artifacts
+          merge-multiple: true
 
       - name: Create Final Archive
         run: |
           mkdir -p final_archive
-          cp -r frontend final_archive/frontend
-          cp -r backend final_archive/backend
+          cp -r frontend final_archive/
+          cp -r backend final_archive/
           cp -r presentation final_archive/presentation_sources
-          cp presentation/dist/presentation.pptx final_archive/
-          cp presentation/dist/presentation.pdf final_archive/
-          cp speech/speech.pdf final_archive/
-          cp speech/speech.docx final_archive/
+          cp temp_artifacts/speech.pdf final_archive/
+          cp temp_artifacts/speech.docx final_archive/
+          cp temp_artifacts/presentation.pdf final_archive/
+          cp temp_artifacts/presentation.pptx final_archive/
 
-          rm -rf final_archive/frontend/.git
-          rm -rf final_archive/backend/.git
-          rm -rf final_archive/presentation_sources/.git
-          rm -rf final_archive/presentation_sources/node_modules
-          rm -rf final_archive/presentation_sources/dist/presentation.pptx
-          rm -rf final_archive/presentation_sources/dist/presentation.pdf
-
+          rm -rf final_archive/**/.git
           zip -r seating-generator.zip final_archive
 
       - name: Upload Final Archive
@@ -170,40 +138,19 @@ jobs:
           path: seating-generator.zip
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     needs: [build-presentation, build-speech, prepare-archive]
     runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
-
     steps:
-      - name: Download Presentation
+      - name: Download all
         uses: actions/download-artifact@v4
         with:
-          name: presentation-dist
           path: final_dist
+          merge-multiple: true
 
-      - name: Download Speech
-        uses: actions/download-artifact@v4
-        with:
-          name: speech-dist
-          path: final_dist
-
-      - name: Download Archive
-        uses: actions/download-artifact@v4
-        with:
-          name: final-archive
-          path: final_dist
-
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload HTML artifact for GitHub Pages
+      - name: Upload for Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: final_dist
 
       - name: Deploy
-        id: deployment
         uses: actions/deploy-pages@v4
