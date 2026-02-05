@@ -26,6 +26,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout Frontend (into presentation folder)
+        uses: actions/checkout@v4
+        with:
+          repository: dvprokofiev/seating-generator-frontend
+          path: frontend
+
+      - name: Checkout Backend (into backend folder)
+        uses: actions/checkout@v4
+        with:
+          repository: dvprokofiev/seating-generator-backend
+          path: backend
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -118,6 +130,30 @@ jobs:
         run: |
           cp speech/speech.pdf presentation/dist/
           cp speech/speech.docx presentation/dist/
+
+      - name: Create Final Archive
+        run: |
+          mkdir -p final_archive
+          cp -r frontend final_archive/frontend
+          cp -r backend final_archive/backend
+          cp -r presentation final_archive/presentation_sources
+          cp speech/speech.pdf final_archive/
+          cp speech/speech.docx final_archive/
+
+          rm -rf final_archive/frontend/.git
+          rm -rf final_archive/backend/.git
+          rm -rf final_archive/presentation_sources/.git
+          rm -rf final_archive/presentation_sources/node_modules
+
+          zip -r seating-generator.zip final_archive
+
+          cp seating-generator.zip presentation/dist/
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Full-Project-Package
+          path: seating-generator-full.zip
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
