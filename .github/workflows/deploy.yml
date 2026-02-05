@@ -148,6 +148,8 @@ jobs:
           rm -rf final_archive/presentation_sources/node_modules
           rm -rf final_archive/presentation_sources/dist/presentation.pptx
           rm -rf final_archive/presentation_sources/dist/presentation.pdf
+          rm -rf final_archive/presentation_sources/dist/speech.pdf
+          rm -rf final_archive/presentation_sources/dist/speech.docx
 
           zip -r seating-generator.zip final_archive
 
