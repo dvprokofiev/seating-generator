@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "presentation/**"
+      - "speech/**"
       - ".github/workflows/deploy.yml"
 
 permissions:
