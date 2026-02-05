@@ -137,6 +137,8 @@ jobs:
           cp -r frontend final_archive/frontend
           cp -r backend final_archive/backend
           cp -r presentation final_archive/presentation_sources
+          cp presentation/presentation.pptx final_archive/
+          cp presentation/presentation.pdf final_archive/
           cp speech/speech.pdf final_archive/
           cp speech/speech.docx final_archive/
 
@@ -144,16 +146,18 @@ jobs:
           rm -rf final_archive/backend/.git
           rm -rf final_archive/presentation_sources/.git
           rm -rf final_archive/presentation_sources/node_modules
+          rm -rf final_archive/presentation_sources/presentation.pptx
+          rm -rf final_archive/presentation_sources/presentation.pdf
 
           zip -r seating-generator.zip final_archive
 
           cp seating-generator.zip presentation/dist/
 
-      - name: Upload Artifacts
+      - name: Upload Archive as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Full-Project-Package
-          path: seating-generator-full.zip
+          name: Arhive with everything
+          path: seating-generator.zip
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
