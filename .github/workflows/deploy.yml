@@ -19,24 +19,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-presentation:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Checkout Frontend (into presentation folder)
-        uses: actions/checkout@v4
-        with:
-          repository: dvprokofiev/seating-generator-frontend
-          path: frontend
-
-      - name: Checkout Backend (into backend folder)
-        uses: actions/checkout@v4
-        with:
-          repository: dvprokofiev/seating-generator-backend
-          path: backend
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -66,13 +53,6 @@ jobs:
           cd presentation
           npx slidev export --format pdf --dark --per-slide --output dist/presentation.pdf
 
-      - name: Upload PDF as separate artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: presentation-pdf
-          path: presentation/dist/presentation.pdf
-          if-no-files-found: error
-
       - name: Export to PPTX
         run: |
           cd presentation
@@ -91,11 +71,17 @@ jobs:
           cd presentation
           python patch_pptx.py
 
-      - name: Upload PPTX as artifact
+      - name: Upload Presentation Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: final-presentation
-          path: presentation/dist/presentation.pptx
+          name: presentation-dist
+          path: presentation/dist/
+
+  build-speech:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install Fonts
         run: |
@@ -118,18 +104,44 @@ jobs:
           cd speech
           pandoc speech.md --reference-doc=template.docx -o speech.docx
 
-      - name: Upload Speech artifacts
+      - name: Upload Speech Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: speech-files
+          name: speech-dist
           path: |
             speech/speech.pdf
             speech/speech.docx
 
-      - name: Copy Speech files to Site dist
-        run: |
-          cp speech/speech.pdf presentation/dist/
-          cp speech/speech.docx presentation/dist/
+  prepare-archive:
+    needs: [build-presentation, build-speech]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Frontend
+        uses: actions/checkout@v4
+        with:
+          repository: dvprokofiev/seating-generator-frontend
+          path: frontend
+
+      - name: Checkout Backend
+        uses: actions/checkout@v4
+        with:
+          repository: dvprokofiev/seating-generator-backend
+          path: backend
+
+      - name: Download Presentation Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: presentation-dist
+          path: presentation/dist
+
+      - name: Download Speech Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: speech-dist
+          path: speech/
 
       - name: Create Final Archive
         run: |
@@ -148,18 +160,41 @@ jobs:
           rm -rf final_archive/presentation_sources/node_modules
           rm -rf final_archive/presentation_sources/dist/presentation.pptx
           rm -rf final_archive/presentation_sources/dist/presentation.pdf
-          rm -rf final_archive/presentation_sources/dist/speech.pdf
-          rm -rf final_archive/presentation_sources/dist/speech.docx
 
           zip -r seating-generator.zip final_archive
 
-          cp seating-generator.zip presentation/dist/
-
-      - name: Upload Archive as Artifact
+      - name: Upload Final Archive
         uses: actions/upload-artifact@v4
         with:
-          name: Arhive with everything
+          name: final-archive
           path: seating-generator.zip
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: [build-presentation, build-speech, prepare-archive]
+    runs-on: ubuntu-latest
+    name: Deploy to GitHub Pages
+
+    steps:
+      - name: Download Presentation
+        uses: actions/download-artifact@v4
+        with:
+          name: presentation-dist
+          path: final_dist
+
+      - name: Download Speech
+        uses: actions/download-artifact@v4
+        with:
+          name: speech-dist
+          path: final_dist
+
+      - name: Download Archive
+        uses: actions/download-artifact@v4
+        with:
+          name: final-archive
+          path: final_dist
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
@@ -167,17 +202,8 @@ jobs:
       - name: Upload HTML artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: presentation/dist
+          path: final_dist
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
-
-    steps:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
