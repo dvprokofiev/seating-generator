@@ -146,8 +146,8 @@ jobs:
           rm -rf final_archive/backend/.git
           rm -rf final_archive/presentation_sources/.git
           rm -rf final_archive/presentation_sources/node_modules
-          rm -rf final_archive/presentation_sources/presentation.pptx
-          rm -rf final_archive/presentation_sources/presentation.pdf
+          rm -rf final_archive/presentation_sources/dist/presentation.pptx
+          rm -rf final_archive/presentation_sources/dist/presentation.pdf
 
           zip -r seating-generator.zip final_archive
 
