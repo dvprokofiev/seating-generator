@@ -88,10 +88,13 @@ jobs:
           cd speech
           pandoc speech.md -o speech.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
           pandoc speech.md --reference-doc=template.docx -o speech.docx
-          pandoc speech.md -o speech.docx
+          pandoc thesis.md -o thesis.pdf --citeproc --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
+          pandoc thesis.md --reference-doc=template.docx --citeproc -o thesis.docx
           mkdir -p ../speech-dist-temp
           cp speech.pdf ../speech-dist-temp/
           cp speech.docx ../speech-dist-temp/
+          cp thesis.docx ../speech-dist-temp/
+          cp thesis.pdf ../speech-dist-temp/
 
       - name: Upload Speech Artifacts
         uses: actions/upload-artifact@v4
@@ -125,6 +128,8 @@ jobs:
           cp -r presentation final_archive/presentation_sources
           cp temp_artifacts/speech.pdf final_archive/
           cp temp_artifacts/speech.docx final_archive/
+          cp temp_artifacts/thesis.docx final_archive/
+          cp temp_artifacts/thesis.pdf final_archive/
           cp temp_artifacts/presentation.pdf final_archive/
           cp temp_artifacts/presentation.pptx final_archive/
 
