@@ -6,6 +6,7 @@ author:
   - "МБОУ «Гимназия» г. Обнинска"
   - ""
   - "Руководитель — Утянская Елена Васильевна"
+  - "Лицензия: [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.ru)"
 bibliography: references.bib
 link-citations: true
 header-includes:
@@ -261,12 +262,6 @@ func fitness(seating []int, config ClassConfig, w Weights, friends SocialMap, en
 изменять их параметры друг от друга, а также экспортировать файл рассадки в PDf, сохранять получившиеся рассадки и классы в памяти.
 
 Для этого был использован фреймворк Vue.js и библиотека bootstrap-vue-next (специальная версия Bootstrap, написанная для лучшей интеграции в Vue.js) и множество других пакетов, список которых можно посмотреть в приложении 2, содержащем файл package.json (в проектах на Node JS файл, где зафиксированы все пакеты, необходимые для сборки проекта)
-
-<p align="center">
-  <img src="../presentation/public/screenshots/main.png" width="70%" alt="Рис. 1. Главный экран приложения">
-  <br>
-  <em>Рис. 1. Главный экран приложения</em>
-</p>
 
 <br>
 
