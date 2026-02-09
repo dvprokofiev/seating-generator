@@ -125,7 +125,6 @@ jobs:
           mkdir -p final_archive
           cp -r frontend final_archive/
           cp -r backend final_archive/
-          cp -r presentation final_archive/presentation_sources
           cp -r temp_artifacts/presentation/dist final_archive/presentation
           cp temp_artifacts/speech.pdf final_archive/
           cp temp_artifacts/speech.docx final_archive/
