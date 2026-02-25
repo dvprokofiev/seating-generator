@@ -13,7 +13,7 @@
 
 Система построена на базе микросервисной архитектуры:
 
-- **[Backend](https://github.com/dvprokofiev/seating-generator-backend)** — сервер на Go. Принимает данные класса, запускает меметический алгоритм и отдает готовый вариант рассадки.
+- **[Backend](https://github.com/dvprokofiev/seating-generator-engine)** — сервер на Go. Принимает данные класса, запускает меметический алгоритм и отдает готовый вариант рассадки.
 - **[Frontend](https://github.com/dvprokofiev/seating-generator-frontend)** — клиент на **Vue.js**. Позволяет визуализировать рассадки, настраивать ограничения и управлять процессом генерации.
 
 ---
