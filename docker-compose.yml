@@ -2,16 +2,16 @@
 # Лицензировано под GNU Affero General Public License v3.0
 # Часть проекта генератора рассадок
 services:
-  backend:
-    image: ghcr.io/dvprokofiev/seating-generator-backend:latest
-    container_name: seating-backend
+  engine:
+    image: ghcr.io/dvprokofiev/seating-generator-engine:latest
+    container_name: seating-generator-engine
     ports: 
       - "8091:5000"
 
   frontend:
     image: ghcr.io/dvprokofiev/seating-generator-frontend:latest
-    container_name: seating-frontend
+    container_name: seating-generator-frontend
     ports:
       - "8092:80"
     depends_on: 
-      - backend
+      - engine
