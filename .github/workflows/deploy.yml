@@ -1,6 +1,8 @@
 name: Deploy Slidev Presentation
 
 on:
+  repository_dispatch:
+    types: [rebuild-archive]
   workflow_dispatch:
   push:
     branches: [main]
