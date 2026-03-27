@@ -34,13 +34,9 @@
 
 Презентация сделана с помощью Slidev и собирается автоматически с помощью Github Actions. Посмотреть ее можно [здесь](https://presentation.seating-generator.ru/), скачать [здесь](https://presentation.seating-generator.ru/presentation.pdf) в формате PDF, [здесь](https://presentation.seating-generator.ru/presentation.pptx) в формате PPTX
 
-## 🎤 Речь
-
-Скачать речь можно [здесь](https://presentation.seating-generator.ru/speech.pdf) в PDF (предпочтительнее) и [здесь](https://presentation.seating-generator.ru/speech.docx) в формате DOCX
-
 ## 📁 Архив со всем нужным
 
-Архив формируется автоматически и содержит файлы речи, презентации и актуальный исходный код. Скачать [здесь](https://presentation.seating-generator.ru/seating-generator.zip)
+Архив формируется автоматически и содержит презентацию и актуальный исходный код. Скачать [здесь](https://presentation.seating-generator.ru/seating-generator.zip)
 
 ## ⚙️ Автоматизация сборки (CI/CD)
 

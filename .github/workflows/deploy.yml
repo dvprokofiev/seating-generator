@@ -2,8 +2,6 @@ name: Deploy Slidev Presentation
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
   push:
     branches: [main]
     paths:
@@ -59,51 +57,8 @@ jobs:
           name: presentation-dist
           path: presentation/dist/
 
-  build-speech:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Cache Speech Dist
-        id: cache-speech
-        uses: actions/cache@v4
-        with:
-          path: speech-dist-temp
-          key: ${{ runner.os }}-speech-${{ hashFiles('speech/speech.md') }}
-
-      - name: Install Fonts and TeX
-        if: steps.cache-speech.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-dejavu fonts-liberation texlive-xetex texlive-fonts-recommended texlive-latex-extra texlive-lang-cyrillic
-
-      - name: Run Pandoc
-        if: steps.cache-speech.outputs.cache-hit != 'true'
-        uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Build Speech
-        if: steps.cache-speech.outputs.cache-hit != 'true'
-        run: |
-          cd speech
-          pandoc speech.md -o speech.pdf --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
-          pandoc speech.md --reference-doc=template.docx -o speech.docx
-          pandoc thesis.md -o thesis.pdf --citeproc --pdf-engine=xelatex -V mainfont="DejaVu Sans" -V monofont="DejaVu Sans Mono" -V geometry:margin=4cm
-          pandoc thesis.md --reference-doc=template.docx --citeproc -o thesis.docx
-          mkdir -p ../speech-dist-temp
-          cp speech.pdf ../speech-dist-temp/
-          cp speech.docx ../speech-dist-temp/
-          cp thesis.docx ../speech-dist-temp/
-          cp thesis.pdf ../speech-dist-temp/
-
-      - name: Upload Speech Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: speech-dist
-          path: ${{ steps.cache-speech.outputs.cache-hit == 'true' && 'speech-dist-temp/' || 'speech/' }}
-
   prepare-archive:
-    needs: [build-presentation, build-speech]
+    needs: [build-presentation]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -126,16 +81,8 @@ jobs:
           cp -r frontend final_archive/
           cp -r backend final_archive/
           cp -r temp_artifacts/ final_archive/presentation
-          rm -r final_archive/presentation/speech.pdf
-          rm -r final_archive/presentation/speech.docx
-          rm -r final_archive/presentation/thesis.pdf
-          rm -r final_archive/presentation/thesis.docx
           rm -r final_archive/presentation/presentation.pptx
           rm -r final_archive/presentation/presentation.pdf
-          cp temp_artifacts/speech.pdf final_archive/
-          cp temp_artifacts/speech.docx final_archive/
-          cp temp_artifacts/thesis.docx final_archive/
-          cp temp_artifacts/thesis.pdf final_archive/
           cp temp_artifacts/presentation.pdf final_archive/
           cp temp_artifacts/presentation.pptx final_archive/
 
@@ -149,7 +96,7 @@ jobs:
           path: seating-generator.zip
 
   deploy:
-    needs: [build-presentation, build-speech, prepare-archive]
+    needs: [build-presentation, prepare-archive]
     runs-on: ubuntu-latest
     steps:
       - name: Download all
