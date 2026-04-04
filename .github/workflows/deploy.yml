@@ -9,6 +9,7 @@ on:
     paths:
       - "presentation/**"
       - "speech/**"
+      - "paper/**"
       - ".github/workflows/deploy.yml"
 
 permissions:
@@ -69,8 +70,10 @@ jobs:
         id: cache-paper
         uses: actions/cache@v4
         with:
-          path: paper.pdf
-          key: ${{ runner.os }}-paper-${{ hashFiles('paper/**/*.tex', 'paper/**/*.bib') }}
+          path: paper/paper.pdf
+          key: ${{ runner.os }}-paper-${{ hashFiles('paper/**/*.tex', 'paper/**/*.bib', 'presentation/public/screenshots/*') }}
+          restore-keys: |
+            ${{ runner.os }}-paper-
 
       - name: Install Pygments (for minted)
         if: steps.cache-paper.outputs.cache-hit != 'true'
