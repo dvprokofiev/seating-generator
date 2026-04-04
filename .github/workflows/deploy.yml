@@ -83,14 +83,13 @@ jobs:
         with:
           root_file: paper.tex
           working_directory: paper/
-          compiler: pdflatex
-          args: "-shell-escape -interaction=nonstopmode -halt-on-error"
+          args: "-shell-escape -pdf -interaction=nonstopmode -halt-on-error"
 
       - name: Upload Paper Artifact
         uses: actions/upload-artifact@v4
         with:
           name: paper-pdf
-          path: paper.pdf
+          path: paper/paper.pdf
 
   prepare-archive:
     needs: [build-presentation, build-paper]
