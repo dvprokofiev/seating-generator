@@ -120,6 +120,7 @@ jobs:
 
           mkdir -p final_archive/presentation
           cp temp_artifacts/presentation.pdf final_archive/presentation/
+          cp temp_artifacts/presentation.pptx final_archive/presentation/
 
           cp temp_artifacts/paper.pdf final_archive/paper.pdf
 
