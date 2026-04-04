@@ -82,6 +82,7 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: paper/paper.tex
+          working_directory: paper/
           compiler: pdflatex
           args: "-shell-escape -interaction=nonstopmode -halt-on-error"
 
