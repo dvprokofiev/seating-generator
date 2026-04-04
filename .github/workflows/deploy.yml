@@ -1,4 +1,4 @@
-name: Deploy Slidev Presentation
+name: Build website, presentation and paper
 
 on:
   repository_dispatch:
@@ -59,8 +59,40 @@ jobs:
           name: presentation-dist
           path: presentation/dist/
 
+  build-paper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Paper PDF
+        id: cache-paper
+        uses: actions/cache@v4
+        with:
+          path: paper.pdf
+          key: ${{ runner.os }}-paper-${{ hashFiles('paper.tex', 'references.bib') }}
+
+      - name: Install Pygments (for minted)
+        if: steps.cache-paper.outputs.cache-hit != 'true'
+        run: |
+          python3 -m pip install Pygments
+
+      - name: Compile LaTeX document
+        if: steps.cache-paper.outputs.cache-hit != 'true'
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: paper.tex
+          compiler: pdflatex
+          args: "-shell-escape -interaction=nonstopmode -halt-on-error"
+
+      - name: Upload Paper Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper.pdf
+
   prepare-archive:
-    needs: [build-presentation]
+    needs: [build-presentation, build-paper]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -71,7 +103,7 @@ jobs:
           git clone --depth 1 https://github.com/dvprokofiev/seating-generator-frontend frontend
           git clone --depth 1 https://github.com/dvprokofiev/seating-generator-backend backend
 
-      - name: Download Presentation and Speech
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: temp_artifacts
@@ -82,11 +114,11 @@ jobs:
           mkdir -p final_archive
           cp -r frontend final_archive/
           cp -r backend final_archive/
-          cp -r temp_artifacts/ final_archive/presentation
-          rm -r final_archive/presentation/presentation.pptx
-          rm -r final_archive/presentation/presentation.pdf
-          cp temp_artifacts/presentation.pdf final_archive/
-          cp temp_artifacts/presentation.pptx final_archive/
+
+          mkdir -p final_archive/presentation
+          cp temp_artifacts/presentation.pdf final_archive/presentation/
+
+          cp temp_artifacts/paper.pdf final_archive/paper.pdf
 
           rm -rf final_archive/**/.git
           zip -r seating-generator.zip final_archive
@@ -98,7 +130,7 @@ jobs:
           path: seating-generator.zip
 
   deploy:
-    needs: [build-presentation, prepare-archive]
+    needs: [build-presentation, build-paper, prepare-archive]
     runs-on: ubuntu-latest
     steps:
       - name: Download all
