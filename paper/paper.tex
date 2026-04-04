@@ -86,6 +86,9 @@ footskip=10mm
 \usepackage{float}
 \graphicspath{{../presentation/public/screenshots}}
 
+% Иконка лицензии CC-BY-SA 4.0
+\usepackage{ccicons}
+
  % =================================================================
 \begin{document}
 	
@@ -116,6 +119,15 @@ footskip=10mm
 			\end{flushright}
 			
 			\vfill
+			{\begingroup
+				\color{gray}
+				\footnotesize % Уменьшаем размер
+				\ccbysa \\ % Векторный значок CC BY-SA
+				Работа доступна по лицензии \\
+				\href{https://creativecommons.org/licenses/by-sa/4.0/deed.ru}{Creative Commons Attribution-ShareAlike 4.0 International}
+				\endgroup}
+			
+			\vspace{0.8cm}
 			г. Обнинск \\
 			2026
 		\end{center}
@@ -412,6 +424,8 @@ footskip=10mm
 		\item Настроить реверс-прокси, например \texttt{Caddy} или \texttt{Nginx} --- промежуточный сервер, принимающий запросы от пользователя и перенаправляющий их к генератору. Это необходимо прежде всего для безопасности, так как именно реверс-прокси берет на себя управление SSL-сертификатами, необходимыми для шифрования всех данных, пересылаемых между пользователем и сайтом и сокрытия "внутренней кухни" сервера
 	\end{itemize}
 	
+	\newpage
+	
 	\section{Лицензирование}
 	Проект полностью лицензирован под \textbf{GNU Affero Public License версии 3} \cite{license_agplv3}. Это значит:
 	
@@ -446,5 +460,234 @@ footskip=10mm
 	\addcontentsline{toc}{section}{Список литературы}
 	\bibliographystyle{plainurl}
 	\bibliography{references}
+	
+	\newpage
+	
+	\section*{Приложение 1. Код функции, запускающий меметический алгоритм}
+	\addcontentsline{toc}{section}{Приложение 1. Код функции, запускающий меметический алгоритм}
+	
+	\begin{minted}{go}
+		func RunGA(req Request) ([]Response, float64, int) {
+			N := req.ClassConfig.Columns * req.ClassConfig.Rows
+			nStudents := len(req.Students)
+			gaConfig := calcGAConfig(nStudents)
+			popSize, generations := gaConfig.PopSize, gaConfig.Generations
+			weights := calculateWeights(req.PriorityWeights)
+			numCPU := runtime.NumCPU()
+			
+			idToIndex := make(map[int]int)
+			opt := make([]optStudent, nStudents)
+			for i, s := range req.Students {
+				idToIndex[s.ID] = i
+				m := func(sl []int) map[int]bool {
+					r := make(map[int]bool)
+					for _, v := range sl {
+						r[v] = true
+					}
+					return r
+				}
+				opt[i] = optStudent{
+					Student: s, index: i,
+					pCols: m(s.PreferredColumns), pRows: m(s.PreferredRows),
+					mCols: m(s.MedicalPreferredColumns), mRows: m(s.MedicalPreferredRows),
+				}
+			}
+			
+			staticScores := make([]float64, nStudents*N)
+			for i := 0; i < nStudents; i++ {
+				for seatIdx := 0; seatIdx < N; seatIdx++ {
+					r, c := seatIdx/req.ClassConfig.Columns, seatIdx%req.ClassConfig.Columns
+					mScore := checkMed(opt[i], r, c)
+					pScore := checkPref(opt[i], r, c)
+					rScore := scorePosition(r, req.ClassConfig.Rows)
+					
+					if mScore > 0 {
+						mScore = weights.MedPenalty
+					} else if mScore < 0 {
+						mScore = -weights.MedPenalty
+					}
+					
+					staticScores[i*N+seatIdx] = (pScore * weights.PrefBonus) + (rScore * weights.RowBonus) + mScore
+				}
+			}
+			
+			rands := make([]*rand.Rand, numCPU)
+			for i := 0; i < numCPU; i++ {
+				rands[i] = rand.New(rand.NewSource(time.Now().UnixNano() + int64(i)))
+			}
+			
+			population := make([][]int, popSize)
+			for i := range population {
+				population[i] = rands[0].Perm(N)
+			}
+			friends, enemies, friendsCount, enemiesCount := buildSocialMap(req, idToIndex)
+			
+			newPop := make([][]int, popSize)
+			for i := range newPop {
+				newPop[i] = make([]int, N)
+			}
+			usedBufs := make([][]bool, popSize)
+			for i := range usedBufs {
+				usedBufs[i] = make([]bool, N)
+			}
+			
+			scores := make([]float64, popSize)
+			var wg sync.WaitGroup
+			
+			bestFitnessEver := -math.MaxFloat64
+			stagnationCounter := 0
+			stagnationLimit := 400 // Stop if no improvement for 400 generations
+			totalGens := 1
+			
+			for gen := 0; gen < generations; gen++ {
+				chunkSize := (popSize + numCPU - 1) / numCPU
+				for w := 0; w < numCPU; w++ {
+					start, end := w*chunkSize, (w+1)*chunkSize
+					if start >= popSize {
+						break
+					}
+					if end > popSize {
+						end = popSize
+					}
+					wg.Add(1)
+					go func(s, e int) {
+						defer wg.Done()
+						for i := s; i < e; i++ {
+							scores[i] = fitness(population[i], req.ClassConfig, weights, friends, enemies, staticScores, nStudents, friendsCount, enemiesCount)
+						}
+					}(start, end)
+				}
+				wg.Wait()
+				
+				iBest := 0
+				for i := 1; i < popSize; i++ {
+					if scores[i] > scores[iBest] {
+						iBest = i
+					}
+				}
+				
+				if scores[iBest] > bestFitnessEver {
+					bestFitnessEver = scores[iBest]
+				}
+				
+				if scores[iBest] > (bestFitnessEver + 0.0001) {
+					bestFitnessEver = scores[iBest]
+					stagnationCounter = 0
+				} else {
+					stagnationCounter++
+				}
+				
+				if stagnationCounter >= stagnationLimit {
+					// Early exit if results stopped improving
+					break
+				}
+				
+				// Adaptive Mutation Rate: Increase if we are stuck
+				mutationRate := 0.15
+				if stagnationCounter > 50 {
+					mutationRate = 0.4 // "Shake" the population to escape local optima
+				}
+				
+				copy(newPop[0], population[iBest])
+				localSearch(rands[0], newPop[0], req.ClassConfig, weights, friends, enemies, staticScores, nStudents, friendsCount, enemiesCount, opt)
+				
+				for w := 0; w < numCPU; w++ {
+					start, end := w*chunkSize, (w+1)*chunkSize
+					if start == 0 {
+						start = 1
+					}
+					if start >= popSize {
+						break
+					}
+					if end > popSize {
+						end = popSize
+					}
+					wg.Add(1)
+					go func(s, e int, r *rand.Rand) {
+						defer wg.Done()
+						for i := s; i < e; i++ {
+							p1Idx := tournamentSelection(r, scores, 3)
+							p2Idx := tournamentSelection(r, scores, 3)
+							CrossOver(r, population[p1Idx], population[p2Idx], newPop[i], usedBufs[i])
+							if r.Float64() < mutationRate {
+								SwapMutation(r, newPop[i])
+							}
+						}
+					}(start, end, rands[w])
+				}
+				wg.Wait()
+				
+				population, newPop = newPop, population
+				totalGens++
+			}
+			
+			bestIdx := 0
+			bestAns := fitness(population[0], req.ClassConfig, weights, friends, enemies, staticScores, nStudents, friendsCount, enemiesCount)
+			for i := 1; i < popSize; i++ {
+				Ans := fitness(population[i], req.ClassConfig, weights, friends, enemies, staticScores, nStudents, friendsCount, enemiesCount)
+				if Ans > bestAns {
+					bestAns = Ans
+					bestIdx = i
+				}
+			}
+			
+			bestIndices := population[bestIdx]
+			response := make([]Response, N)
+			for i, studentIdx := range bestIndices {
+				row, col := i/req.ClassConfig.Columns, i%req.ClassConfig.Columns
+				if studentIdx >= nStudents || studentIdx < 0 {
+					response[i] = Response{SeatID: i, Row: row, Column: col, Student: "-", StudentID: -1}
+					continue
+				}
+				response[i] = Response{
+					SeatID: i, Row: row, Column: col,
+					Student: opt[studentIdx].Name, StudentID: opt[studentIdx].ID,
+					Satisfaction: getSatisfactionDetails(bestIndices, row, col, studentIdx, weights, req.ClassConfig, friends, enemies, friendsCount, enemiesCount, opt),
+				}
+			}
+			return response, bestAns, totalGens
+		}
+	\end{minted}
+	
+	\newpage
+	
+	\section*{Приложение 2. Файл package.json, содержащий библиотеки, необходимые для сборки фронтенда}
+	\addcontentsline{toc}{section}{Приложение 2. Файл package.json, содержащий библиотеки, необходимые для сборки фронтенда}
+	\begin{minted}{go}
+		{
+			"name": "frontend",
+			"private": true,
+			"version": "0.0.0",
+			"license": "AGPL-3.0-only",
+			"author": "Прокофьев Даниил <d@dvprokofiev.ru>",
+			"type": "module",
+			"scripts": {
+				"dev": "vite",
+				"build": "vite build",
+				"preview": "vite preview"
+			},
+			"dependencies": {
+				"@popperjs/core": "^2.11.8",
+				"axios": "1.14.0",
+				"bootstrap": "^5.3.8",
+				"bootstrap-vue-next": "^0.40.9",
+				"jspdf": "^4.0.0",
+				"jspdf-autotable": "^5.0.7",
+				"papaparse": "^5.5.3",
+				"unplugin-icons": "^22.5.0",
+				"vue": "^3.5.26",
+				"vue-router": "^4.6.4",
+				"vuedraggable": "^4.1.0"
+			},
+			"devDependencies": {
+				"@iconify-json/bi": "^1.2.7",
+				"@vitejs/plugin-vue": "^6.0.3",
+				"unplugin-vue-components": "^29.2.0",
+				"vite": "^7.3.1"
+			}
+		}
+		
+	\end{minted}
+	
 	
 \end{document}
