@@ -75,8 +75,9 @@ footskip=10mm
 
 % Форматирование приложений
 \usepackage[russian]{cleveref}
-\crefname{appsec}{приложение}{приложения}
-\Crefname{appsec}{Приложение}{Приложения}
+\crefformat{appsec}{приложении~#2#1#3}
+\Crefformat{appsec}{Приложении~#2#1#3}
+\makeatother
 
 \hypersetup{
 	citecolor=green,       % Цвет ссылок на литературу
@@ -128,8 +129,6 @@ footskip=10mm
 				\color{gray}
 				\footnotesize % Уменьшаем размер
 				\ccbysa \\ % Векторный значок CC BY-SA
-				Работа доступна по лицензии \\
-				\href{https://creativecommons.org/licenses/by-sa/4.0/deed.ru}{Creative Commons Attribution-ShareAlike 4.0 International}
 				\endgroup}
 			
 			\vspace{0.8cm}
@@ -274,7 +273,7 @@ footskip=10mm
 		\item С небольшим шансом в получившемся потомке меняем двух учеников случайным образом
 	\end{enumerate}
 	
-	Код функции, запускающий алгоритм решения без вспомогательных подпрограмм представлен в Приложении 1 (\cref{appendix_a}).
+	Код функции, запускающий алгоритм решения без вспомогательных подпрограмм представлен в \Cref{appendix_a}.
 	
 	\subsection{Как реализована проверка предпочтений?}
 	Для проверки предпочтений были написаны вспомогательные функции: \texttt{checkMed}, \texttt{checkPref}, \texttt{checkFriends} и \texttt{checkEnemies}. Все они возвращают значение от 0.0 до 1.0 - насколько выполнено каждое из предпочтений ученика.
@@ -379,7 +378,7 @@ footskip=10mm
 	
 	\section{Пользовательский интерфейс}
 	Стояла задача разработать понятный и удобный интерфейс. Нужно было отделить возможность сохранять классы, выбирать их в генераторе и изменять их параметры друг от друга, а также экспортировать файл рассадки в PDF, сохранять получившиеся рассадки и классы в памяти.
-	Для этого был использован фреймворк \texttt{Vue.js} и библиотека \texttt{bootstrap-vue-next} (специальная версия Bootstrap, написанная для лучшей интеграции в Vue.js) и множество других пакетов, список которых можно посмотреть в приложении 2 (\cref{appendix_b}), содержащем файл \texttt{package.json} (в проектах на \texttt{Node.js} файл, где зафиксированы все пакеты, необходимые для сборки проекта)
+	Для этого был использован фреймворк \texttt{Vue.js} и библиотека \texttt{bootstrap-vue-next} (специальная версия Bootstrap, написанная для лучшей интеграции в Vue.js) и множество других пакетов, список которых можно посмотреть в \Cref{appendix_b}), содержащем файл \texttt{package.json} (в проектах на \texttt{Node.js} файл, где зафиксированы все пакеты, необходимые для сборки проекта)
 	
 	\begin{figure}[H]               % [H] - здесь"
 		\centering                   % Выравнивание по центру
@@ -470,8 +469,22 @@ footskip=10mm
 	
 	\newpage
 	\appendix
+	\setcounter{section}{0}
+	\renewcommand{\thesection}{\arabic{section}}
 	
-	\section{Код функции RunGA}
+	% Настройка формата заголовка в самом тексте (Приложение 1. Название)
+	\titleformat{\section}{\normalfont\Large\bfseries\centering}{Приложение~\thesection. }{0pt}{}
+	
+	% Чтобы в оглавлении не дублировались номера, временно меняем формат записи в TOC
+	\makeatletter
+	\newcommand{\appsection}[1]{
+		\refstepcounter{section}
+		\section*{Приложение~\thesection. #1} % Создаем заголовок без стандартной записи в TOC
+		\addcontentsline{toc}{section}{Приложение~\thesection. #1} % Пишем в оглавление вручную
+	}
+	\makeatother
+	
+	\appsection{Код функции RunGA}
 	\label[appsec]{appendix_a}
 	
 	\begin{minted}{go}
@@ -659,7 +672,7 @@ footskip=10mm
 	
 	\newpage
 	
-	\section{Файл package.json}
+	\appsection{Файл package.json}
 	\label[appsec]{appendix_b}
 	\begin{minted}{go}
 		{
