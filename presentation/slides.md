@@ -324,31 +324,37 @@ for gen := 0; gen < generations; gen++ {
 ```
 
 ---
+layout: two-cols-header
+class: px-4 flex flex-col justify-center
+---
 
-# **Фитнес функция: как оценить рассадку?**
+# Фитнес-функция: как оценить рассадку?
 
+::left::
 
-Общая оценка рассадки $F(S)$ считается как сумма учтенности предпочтений каждого из учеников в отдельности
+<div class="pr-4">
 
-```go
-func fitness(seating []int, config ClassConfig, w Weights, friends SocialMap, enemies SocialMap, ...) float64 {
-	score := 0.0
-	for i, studentIdx := range seating {
-		if studentIdx < 0 || studentIdx >= nStudents {
-			continue
-		}
-		row, col := i/config.Columns, i%config.Columns
-		fScore := checkFriends(studentIdx, seating, row, col, config, friends, nStudents, friendsCount)
-		ePenalty := checkEnemies(studentIdx, seating, row, col, config, enemies, nStudents)
+$$S_{total} = \frac{1}{N} \sum_{i=1}^{N} \frac{F_i \cdot W_{fr} - E_i \cdot W_{en} + S_{stat, i}}{W_{fr} + W_{en} + W_{med} + W_{pref}}$$
 
-		sScore := (fScore * w.FriendBonus * 100.0) - (ePenalty * w.EnemyPenalty * 5.0 * 100.0)
-		sScore += staticScores[studentIdx*config.Rows*config.Columns+i]
+<div class="text-sm opacity-90">
 
-		score += sScore
-	}
-	return score
-}
-```
+- $S_{total}$ — итоговый коэффициент приспособленности
+- $N$ — количество учеников в классе
+- $F_i, E_i$ — кол-во друзей и врагов в радиусе $R$
+- $W_{x}$ — весовые коэффициенты значимости (друзья, враги, медицина, предпочтения)
+- $S_{stat, i}$ — сумма баллов за медицинские требования и выбор места
+
+</div>
+</div>
+
+::right::
+
+<div class="bg-primary/10 p-4 rounded-lg border border-primary/20">
+
+### Интерпретация
+Функция нормализована относительно **теоретического максимума** --- рассадки, где у **каждого** есть **предпочтения** и все они выполнены
+
+</div>
 
 ---
 layout: two-cols-header
