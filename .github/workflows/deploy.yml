@@ -35,22 +35,36 @@ jobs:
           path: presentation/dist
           key: ${{ runner.os }}-slides-${{ hashFiles('presentation/**') }}
 
+      - name: Install pnpm
+        if: steps.cache-slides.outputs.cache-hit != 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         if: steps.cache-slides.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 'lts/*'
+          cache: "pnpm"
+          cache-dependency-path: presentation/pnpm-lock.yaml
 
       - name: Install and Build Slides
         if: steps.cache-slides.outputs.cache-hit != 'true'
         run: |
           npm i -g @antfu/ni
+          
           cd presentation
-          nci
+          
+          pnpm install --frozen-lockfile
+
           npx playwright install --with-deps chromium
-          nr build --base /
+
+          pnpm run build --base /
+          
           npx slidev export --format pdf --dark --per-slide --output dist/presentation.pdf
           npx slidev export --format pptx --output dist/presentation.pptx
+
           python -m pip install python-pptx
           python patch_pptx.py
 
