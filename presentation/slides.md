@@ -17,7 +17,7 @@ fonts:
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2m2 8h-4a1 1 0 0 0-1 1v4h1.5v4h3v-4H15v-4a1 1 0 0 0-1-1m-2-5a2 2 0 1 0 0 4a2 2 0 0 0 0-4"/></svg>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2m0 4c-2.177 0-4.03 1.67-4.716 4H6l2.5 3l2.5-3H9.401C9.92 8.805 10.89 8 12 8c1.657 0 3 1.79 3 4s-1.343 4-3 4c-1.11 0-2.08-.804-2.598-1.999H7.285C7.97 16.33 9.823 18 12 18c2.761 0 5-2.686 5-6s-2.239-6-5-6"/></svg>
   </div>
-  <span class="text-sm border-l border-white/20 pl-2">Licensed under CC BY-SA 4.0</span>
+  <span class="text-sm border-l border-white/20 pl-2">Презентация лицензирована под CC BY-SA 4.0</span>
 </div>
 
 ---
@@ -328,7 +328,7 @@ layout: two-cols-header
 class: px-4 flex flex-col justify-center
 ---
 
-# Фитнес-функция: как оценить рассадку?
+# **Фитнес-функция: как оценить рассадку?**
 
 ::left::
 
