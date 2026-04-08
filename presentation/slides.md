@@ -599,7 +599,7 @@ class: px-1
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
-    "axios": "^1.13.2",
+    "axios": "1.14.0",
     "bootstrap": "^5.3.8",
     "bootstrap-vue-next": "^0.40.9",
 ```
@@ -689,7 +689,6 @@ class: flex flex-col justify-center items-start
 ::left::
 
 - **Домен:** `seating-generator.ru`
-- **Провайдер:** Cloud.ru (VPS на Linux, Cloud Free Evolution Tier)
 
 ### Архитектура
 - **Caddy:** Реверс-прокси + SSL
