@@ -84,7 +84,7 @@ jobs:
         id: cache-abstract
         uses: actions/cache@v4
         with:
-          path: abstract/abstarct.pdf
+          path: abstract/abstract.pdf
           key: ${{ runner.os }}-abstract-${{ hashFiles('abstract/**/*.tex', 'abstract/**/*.bib', 'presentation/public/screenshots/*') }}
           restore-keys: |
             ${{ runner.os }}-abstract-
