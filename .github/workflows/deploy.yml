@@ -45,7 +45,7 @@ jobs:
         if: steps.cache-slides.outputs.cache-hit != 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
           cache: "pnpm"
           cache-dependency-path: presentation/pnpm-lock.yaml
 
@@ -53,15 +53,15 @@ jobs:
         if: steps.cache-slides.outputs.cache-hit != 'true'
         run: |
           npm i -g @antfu/ni
-          
+
           cd presentation
-          
+
           pnpm install --frozen-lockfile
 
           npx playwright install --with-deps chromium
 
           pnpm run build --base /
-          
+
           npx slidev export --format pdf --dark --per-slide --output dist/presentation.pdf
           npx slidev export --format pptx --output dist/presentation.pptx
 
@@ -73,6 +73,35 @@ jobs:
         with:
           name: presentation-dist
           path: presentation/dist/
+
+  build-abstract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Abstract PDF
+        id: cache-abstract
+        uses: actions/cache@v4
+        with:
+          path: abstract/abstarct.pdf
+          key: ${{ runner.os }}-abstract-${{ hashFiles('abstract/**/*.tex', 'abstract/**/*.bib', 'presentation/public/screenshots/*') }}
+          restore-keys: |
+            ${{ runner.os }}-abstract-
+
+      - name: Compile LaTeX document
+        if: steps.cache-abstract.outputs.cache-hit != 'true'
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: abstract.tex
+          working_directory: abstract/
+          args: "-shell-escape -pdf -interaction=nonstopmode -halt-on-error"
+
+      - name: Upload Abstract Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: abstract-pdf
+          path: abstract/abstract.pdf
 
   build-paper:
     runs-on: ubuntu-latest
@@ -109,7 +138,7 @@ jobs:
           path: paper/paper.pdf
 
   prepare-archive:
-    needs: [build-presentation, build-paper]
+    needs: [build-presentation, build-paper, build-abstract]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -138,6 +167,8 @@ jobs:
 
           cp temp_artifacts/paper.pdf final_archive/paper.pdf
 
+          cp temp_artifacts/abstract.pdf final_archive/abstract.pdf
+
           rm -rf final_archive/**/.git
           zip -r seating-generator.zip final_archive
 
@@ -148,7 +179,7 @@ jobs:
           path: seating-generator.zip
 
   deploy:
-    needs: [build-presentation, build-paper, prepare-archive]
+    needs: [build-presentation, build-paper, build-abstract, prepare-archive]
     runs-on: ubuntu-latest
     steps:
       - name: Download all
