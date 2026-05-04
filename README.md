@@ -1,7 +1,5 @@
 # 🎓 Генератор рассадки
 
-[![Backend GA Engine CI](https://github.com/dvprokofiev/seating-generator-engine/actions/workflows/docker-image.yml/badge.svg)](https://github.com/dvprokofiev/seating-generator-engine/actions/workflows/docker-image.yml)
-[![Frontend CI](https://github.com/dvprokofiev/seating-generator-frontend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/dvprokofiev/seating-generator-frontend/actions/workflows/docker-image.yml)
 ![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
 ![Tech](https://img.shields.io/badge/Stack-Go%20%7C%20Vue%20%7C%20Docker-success)
 
